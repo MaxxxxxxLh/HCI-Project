@@ -3,7 +3,7 @@ export interface TaskInterface{
     title: string,
     content: string,
     level: string,
-    date: string,
-    categorie : string,
+    date: Date,
+    category: string,
     //undertask: JSX.Element,
 }
