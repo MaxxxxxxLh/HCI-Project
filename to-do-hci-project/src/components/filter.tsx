@@ -14,11 +14,11 @@ export const FilteredButton: React.FC<FilteredButtonProps> = ({ options}) => {
   };
 
   return (
-    <div className="relative inline-block text-left pl-16 pr-16 ">
+    <div className="relative inline-block text-left pl-16 pr-16 select-none">
       <div>
         <button
           type="button"
-          className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
           onClick={() => setIsOpen(!isOpen)}
         >
           {selectedOption || "Filter"}
@@ -39,7 +39,7 @@ export const FilteredButton: React.FC<FilteredButtonProps> = ({ options}) => {
       </div>
 
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+        <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  ">
           <div
             className="py-1"
             role="menu"
@@ -50,7 +50,7 @@ export const FilteredButton: React.FC<FilteredButtonProps> = ({ options}) => {
               <button
                 key={index}
                 onClick={() => handleOptionClick(option)}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 shadow-md hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:shadow-slate-600"
                 role="menuitem"
               >
                 {option}

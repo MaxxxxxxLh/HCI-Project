@@ -5,5 +5,6 @@ export interface TaskInterface{
     level: string,
     date: Date,
     category: string,
+    isFinished: boolean,
     //undertask: JSX.Element,
 }

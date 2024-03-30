@@ -13,22 +13,50 @@ interface BoxProps {
 export const Box: React.FC<BoxProps> = ({ task, onUpdate, onRemove }) => {
     const [editedTask, setEditedTask] = useState<TaskInterface>(task);
     const [isEditing, setIsEditing] = useState(true);
+    const [isChecked, setIsChecked] = useState<boolean>(true);
+    const [finishedTasks, setFinishedTasks] = useState<TaskInterface[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
 
     useEffect(() => {
         setEditedTask(task);
     }, [task]);
 
+    useEffect(() => {
+        const storedTasks = localStorage.getItem('tasks');
+        if (storedTasks) {
+            setFinishedTasks(JSON.parse(storedTasks));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('tasks', JSON.stringify(finishedTasks));
+    }, [finishedTasks]);
+
     const handleUpdate = () => {
         onUpdate(editedTask);
         setIsEditing(false);
+
+        const updatedTasks = finishedTasks.map(t => t.id === editedTask.id ? editedTask : t);
+        setFinishedTasks(updatedTasks);
     };
 
     const handleCategoryChange = (newCategory: string) => {
         setEditedTask({ ...editedTask, category: newCategory }); 
     };
 
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsChecked(e.target.checked);
+        if(!e.target.checked){
+            setFinishedTasks([...finishedTasks, editedTask]);
+            onRemove(task.id);
+
+            const updatedTasks = finishedTasks.filter(t => t.id !== editedTask.id);
+            setFinishedTasks(updatedTasks);
+        }
+    };
+
     return (
-        <div className="relative inline-block border-4 border-slate-500 rounded-md box-border dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white ">
+        <div className="select-none relative rounded-md dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white ">
             {isEditing ? (
                 <div className='p-4'>
                     <label>Title</label>
@@ -59,32 +87,35 @@ export const Box: React.FC<BoxProps> = ({ task, onUpdate, onRemove }) => {
                     />
 
                     <label>Category</label>
-                    <AddCategory category={editedTask.category} onCategoryChange={handleCategoryChange} />
+                    <AddCategory category={editedTask.category} onCategoryChange={(category: string) => setSelectedCategory(category)} />
                     <button onClick={handleUpdate}>Update</button>
                     <button onClick={() => setIsEditing(false)}>Cancel</button>
                 </div>
             ) : (
                 <>
-                    <button onClick={() => setIsEditing(true)} className='p-4'>
-                        <h3>{task.title}</h3>
-                        <p>{task.content}</p>
-                        <p>{task.level}</p>
-                        <p>{task.date ? new Date(task.date).toLocaleDateString('fr-FR') : ''}</p>
-                        <p>{task.category}</p>
-                    </button>  
+                    <div onClick={() => setIsEditing(true)}>
+                        <div className='justify-items-center p-8 grid grid-cols-12'>
+                            <h4 className='col-start-2 col-span-4'>{task.title}</h4>
+                            <h4>{task.category}</h4>
+                            <h4 >{task.level}</h4>
+                            <h4>{task.date ? new Date(task.date).toLocaleDateString('fr-FR') : ''}</h4>
+                            
+                            <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} className="checkbox checkbox-success"/>
+                            <div className="flex items-center justify-center flex-1 h-4 w-4 bg-red-800 text-white shadow rounded-full">
+                                <div onClick={() => onRemove(task.id)}>
+                                    <div className="relative">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>                    
+                    </div>  
                     <p></p>
-                    <div className="absolute top-0 right-0 flex items-center justify-center flex-1 h-4 w-4 bg-red-800 text-white shadow rounded-full">
-                        <button onClick={() => onRemove(task.id)}>
-                            <div className="relative">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /> {/* Utilisez la forme de croix au lieu du signe plus */}
-                                </svg>
-                            </div>
-                        </button>
-                    </div>
-
                 </>
             )}
         </div>
     );
 };
+

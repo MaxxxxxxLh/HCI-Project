@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export const AddCategory = (category: any) => {
-  const [options, setOptions] = useState<string[]>([""]);
+export const AddCategory = ({ onCategoryChange }: { onCategoryChange: (category: string) => void }) => {
+  const [options, setOptions] = useState<string[]>(() => {
+    const storedOptions = localStorage.getItem('categoryOptions');
+    return storedOptions ? JSON.parse(storedOptions) : [''];
+  });
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [editedOption, setEditedOption] = useState<string>('');
 
+  useEffect(() => {
+    localStorage.setItem('categoryOptions', JSON.stringify(options));
+  }, [options]);
+
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(e.target.value);
-    setEditedOption(''); 
-    category = e.target.value
+    setEditedOption('');
+    onCategoryChange(e.target.value);
   };
 
   const handleEdit = () => {
@@ -17,7 +24,6 @@ export const AddCategory = (category: any) => {
 
   const handleSave = () => {
     console.log('Edited Option:', editedOption);
-    
   };
 
   const handleAddOption = () => {
@@ -55,4 +61,3 @@ export const AddCategory = (category: any) => {
     </div>
   );
 };
-
