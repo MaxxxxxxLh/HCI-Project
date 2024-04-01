@@ -12,10 +12,10 @@ interface BoxProps {
 
 export const Box: React.FC<BoxProps> = ({ task, onUpdate, onRemove }) => {
     const [editedTask, setEditedTask] = useState<TaskInterface>(task);
-    const [isEditing, setIsEditing] = useState(true);
+    const [isEditing, setIsEditing] = useState<boolean>(true);
     const [isChecked, setIsChecked] = useState<boolean>(true);
     const [finishedTasks, setFinishedTasks] = useState<TaskInterface[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string>('');
+
 
     useEffect(() => {
         setEditedTask(task);
@@ -43,6 +43,10 @@ export const Box: React.FC<BoxProps> = ({ task, onUpdate, onRemove }) => {
     const handleCategoryChange = (newCategory: string) => {
         setEditedTask({ ...editedTask, category: newCategory }); 
     };
+
+    const handleLevelChange = (newLevel: string) => {
+        setEditedTask({...editedTask, level: newLevel});
+    }
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsChecked(e.target.checked);
@@ -73,11 +77,12 @@ export const Box: React.FC<BoxProps> = ({ task, onUpdate, onRemove }) => {
                     <label>Importance</label>
                     <select
                         value={editedTask.level}
-                        onChange={(e) => setEditedTask({ ...editedTask, level: e.target.value })}
+                        onChange={(e) => handleLevelChange(e.target.value)}
                     >
-                        <option value="urgent">Urgent</option>
-                        <option value="medium">Medium</option>
-                        <option value="not urgent">Not Urgent</option>
+                         <option value="" disabled selected hidden>Choose a priority level</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
                     </select>
                     <label>Date</label>
                     <DatePicker
@@ -87,7 +92,7 @@ export const Box: React.FC<BoxProps> = ({ task, onUpdate, onRemove }) => {
                     />
 
                     <label>Category</label>
-                    <AddCategory category={editedTask.category} onCategoryChange={(category: string) => setSelectedCategory(category)} />
+                    <AddCategory onCategoryChange={(category: string) => handleCategoryChange(category)} />
                     <button onClick={handleUpdate}>Update</button>
                     <button onClick={() => setIsEditing(false)}>Cancel</button>
                 </div>
@@ -100,11 +105,17 @@ export const Box: React.FC<BoxProps> = ({ task, onUpdate, onRemove }) => {
                             <h4 >{task.level}</h4>
                             <h4>{task.date ? new Date(task.date).toLocaleDateString('fr-FR') : ''}</h4>
                             
-                            <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} className="checkbox checkbox-success"/>
+                            <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} className="checkbox checkbox-success cursor-pointer"/>
                             <div className="flex items-center justify-center flex-1 h-4 w-4 bg-red-800 text-white shadow rounded-full">
-                                <div onClick={() => onRemove(task.id)}>
-                                    <div className="relative">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div>
+                                    <div className="relative" onClick={() => onRemove(task.id)}>
+                                        <svg 
+                                            xmlns="http://www.w3.org/2000/svg" 
+                                            className="h-3 w-3 text-red-500 cursor-pointer" 
+                                            fill="none" 
+                                            viewBox="0 0 24 24" 
+                                            stroke="currentColor"
+                                        >
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </div>

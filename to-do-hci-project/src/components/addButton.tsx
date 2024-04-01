@@ -43,17 +43,8 @@ export const BoxManager = () => {
     };
 
     return (
-        <>
-            <div className="absolute bottom-1 right-1 flex items-center justify-center flex-1 h-12 w-12 p-2 text-gray shadow-md shadow-gray-600 rounded-full dark:border-gray-600 dark:text-white dark:bg-gray-700 dark:shadow-slate-400 dark:shadow-inner">
-                <button onClick={addTask}>
-                    <div className="relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                    </div>
-                </button>
-            </div>
-            <div className="justify-items-center p-8 grid grid-cols-12">
+        <> 
+           <div className="justify-items-center p-8 grid grid-cols-12">
                 <h4 className="col-start-2 col-span-4">Title</h4>
                 <h4>Category</h4>
                 <h4>Priority</h4>
@@ -61,16 +52,28 @@ export const BoxManager = () => {
                 <h4>Done</h4>
                 <h4>Suppress</h4>
             </div>
-            <div>
-                {tasks.map(task => (
-                    <Box
-                        key={task.id}
-                        task={task}
-                        onUpdate={updateTask}
-                        onRemove={removeTask}
-                    />
-                ))}
+            <div className = "flex-grow overflow-auto">
+                <div className="absolute bottom-4 right-4 flex items-center justify-center h-12 w-12 p-2 text-gray shadow-md shadow-gray-600 rounded-full dark:border-gray-600 dark:text-white dark:bg-gray-700 dark:shadow-slate-400 dark:shadow-inner">
+                        <button onClick={addTask}>
+                            <div className="relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+                <div>
+                    {tasks.map(task => (
+                        <Box
+                            key={task.id}
+                            task={task}
+                            onUpdate={updateTask}
+                            onRemove={removeTask}
+                        />
+                    ))}
+                </div>
             </div>
         </>
+        
     );
 };
