@@ -1,0 +1,23 @@
+{
+    "title": "Title",
+    "category": "Category",
+    "priority": "Priority",
+    "date": "Date",
+    "done": "Done",
+    "remove": "Remove",
+    "content": "Content",
+    "update": "Update",
+    "cancel": "Cancel",
+    "choosePriority": "Choose a priority level",
+    "noTasks": "No tasks for today",
+    "scheduleFor": "Schedule for",
+    "openOptions": "Open options",
+    "edit": "Edit",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "addCategory": "Add Category",
+    "filter": "Filter",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "search": "Search"
+}

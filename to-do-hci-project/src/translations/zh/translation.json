@@ -1,0 +1,23 @@
+{ 
+    "title": "标题", 
+    "category": "类别", 
+    "priority": "优先级", 
+    "date": "日期", 
+    "done": "已完成", 
+    "remove": "移除", 
+    "content": "内容", 
+    "update": "更新", 
+    "cancel": "取消", 
+    "choosePriority": "选择优先级", 
+    "noTasks": "今天没有任务", 
+    "scheduleFor": "安排在", 
+    "openOptions": "打开选项", 
+    "edit": "编辑", 
+    "previousMonth": "上个月", 
+    "nextMonth": "下个月", 
+    "addCategory": "添加类别", 
+    "filter": "过滤", 
+    "darkMode": "暗模式", 
+    "lightMode": "亮模式", 
+    "search": "搜索" 
+}

@@ -1,0 +1,23 @@
+{
+    "title": "제목",
+    "category": "카테고리",
+    "priority": "우선순위",
+    "date": "날짜",
+    "done": "완료",
+    "remove": "제거",
+    "content": "내용",
+    "update": "업데이트",
+    "cancel": "취소",
+    "choosePriority": "우선순위 선택",
+    "noTasks": "오늘 할 일이 없습니다",
+    "scheduleFor": "일정",
+    "openOptions": "옵션 열기",
+    "edit": "편집",
+    "previousMonth": "이전 달",
+    "nextMonth": "다음 달",
+    "addCategory": "카테고리 추가",
+    "filter": "필터",
+    "darkMode": "다크 모드",
+    "lightMode": "라이트 모드",
+    "search": "검색"
+}

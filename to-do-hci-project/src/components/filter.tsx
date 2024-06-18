@@ -1,26 +1,43 @@
 import React, { useState } from 'react';
 import { TaskInterface } from '@/interfaces/TaskInterface';
+import { useEffect } from 'react';
+import i18n from './i18n';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 
 interface FilteredButtonProps {
   options: string[];
-  tasks: TaskInterface; // Remplacez par le type de vos tâches
+  setIsFiltered: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const FilteredButton: React.FC<FilteredButtonProps> = ({ options, tasks }) => {
+export const FilteredButton: React.FC<FilteredButtonProps> = ({ options, setIsFiltered}) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   const handleOptionClick = (option: string) => {
       setSelectedCategory(option);
+      localStorage.setItem('selectedCategory', option);
+      let tasks = localStorage.getItem('tasks');
       setIsOpen(false);
+      if (option === ""){
+        setIsFiltered(false);
+      }else{
+        setIsFiltered(true)
+      }
+      if (tasks) {
+          const parsedTasks = JSON.parse(tasks);
+          const filteredTasks: any = option !== "" ? parsedTasks.filter(task => {
+            return task.category === option}) : parsedTasks;
+          localStorage.setItem('filteredTask', JSON.stringify(filteredTasks));
+      }
+      
   };
 
-  // Filtrer les tâches en fonction de la catégorie sélectionnée
-  const filteredTasks = selectedCategory
-      ? tasks.filter(task => task.category === selectedCategory)
-      : tasks;
+
+
 
   return (
+    <>
       <div className="relative inline-block text-left pl-16 pr-16 select-none">
                   <div className="relative inline-block text-left pl-16 pr-16 select-none">
             <div>
@@ -29,7 +46,7 @@ export const FilteredButton: React.FC<FilteredButtonProps> = ({ options, tasks }
                     className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                     onClick={() => setIsOpen(!isOpen)}
                 >
-                    {selectedOption || 'Filter'}
+                    {selectedCategory? `${t('filter')} (${selectedCategory})` : t('filter')}
                     <svg
                         className="-mr-1 ml-2 h-5 w-5"
                         xmlns="http://www.w3.org/2000/svg"
@@ -63,6 +80,8 @@ export const FilteredButton: React.FC<FilteredButtonProps> = ({ options, tasks }
                 </div>
             )}
         </div>
-      </div>
+      </div>  
+    </>
+      
   );
 };

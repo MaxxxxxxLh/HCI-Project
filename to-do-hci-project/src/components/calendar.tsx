@@ -15,9 +15,12 @@ import {
   parseISO,
   startOfToday,
 } from 'date-fns'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Box } from './boxTask'
 import { TaskInterface } from '@/interfaces/TaskInterface'
+import i18n from './i18n'
+import { I18nextProvider,useTranslation } from 'react-i18next'
+import { enUS, fr, ko, es, zhCN } from "date-fns/locale";
 
 
 
@@ -26,12 +29,23 @@ function classNames(...classes:any[]) {
 }
 
 export const Calendar = () => {
+  const { t } = useTranslation()
   let today = startOfToday()
   let [selectedDay, setSelectedDay] = useState(today)
   let [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
   let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
   const storedTasks = localStorage.getItem("tasks");
   const tasks = storedTasks ? JSON.parse(storedTasks) : [];
+
+  const languageLocales: { [key: string]: Locale } = {
+    en: enUS,
+    fr: fr,
+    ko: ko, 
+    es: es,
+    zh: zhCN,
+  };
+  const currentLanguage = i18n.language;
+  const locale = languageLocales[currentLanguage];
   let days = eachDayOfInterval({
     start: firstDayCurrentMonth,
     end: endOfMonth(firstDayCurrentMonth),
@@ -51,180 +65,138 @@ export const Calendar = () => {
     isSameDay(task.date, selectedDay)
   );
 
+  const loadTasksFromLocalStorage = () => {
+    const storedTasks = localStorage.getItem("tasks");
+    const tasks = (storedTasks ? JSON.parse(storedTasks) : []);
+  };
+
   return (
-    <div className="pt-16">
-      <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6">
-        <div className="md:grid md:grid-cols-2 md:divide-x md:divide-gray-200">
-          <div className="md:pr-14">
-            <div className="flex items-center">
-              <h2 className="flex-auto font-semibold text-gray-900 dark:text-white">
-                {format(firstDayCurrentMonth, 'MMMM yyyy')}
-              </h2>
-              <button
-                type="button"
-                onClick={previousMonth}
-                className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500 dark:text-slate-100"
-              >
-                <span className="sr-only">Previous month</span>
-                <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
-              </button>
-              <button
-                onClick={nextMonth}
-                type="button"
-                className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500 dark:text-slate-100"
-              >
-                <span className="sr-only">Next month</span>
-                <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="grid grid-cols-7 mt-10 text-xs leading-6 text-center text-gray-500 dark:text-slate-100">
-              <div>S</div>
-              <div>M</div>
-              <div>T</div>
-              <div>W</div>
-              <div>T</div>
-              <div>F</div>
-              <div>S</div>
-            </div>
-            <div className="grid grid-cols-7 mt-2 text-sm dark:text-white">
-              {days.map((day, dayIdx) => (
-                <div
-                  key={day.toString()}
-                  className={classNames(
-                    dayIdx === 0 && colStartClasses[getDay(day)],
-                    'py-1.5'
-                  )}
+    <>
+      <div className="pt-16">
+        <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6">
+          <div className="md:grid md:grid-cols-2 md:divide-x md:divide-gray-200">
+            <div className="md:pr-14">  
+              <div className="flex items-center">
+                <h2 className="flex-auto font-semibold text-gray-900 dark:text-white">
+                  {format(firstDayCurrentMonth, 'MMM-yyyy', {locale})}
+                </h2>
+                <button
+                  type="button"
+                  onClick={previousMonth}
+                  className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500 dark:text-slate-100"
                 >
-                  <button
-                    type="button"
-                    onClick={() => setSelectedDay(day)}
+                  <span className="sr-only">{t('previousMonth')}</span>
+                  <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
+                </button>
+                <button
+                  onClick={nextMonth}
+                  type="button"
+                  className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500 dark:text-slate-100"
+                >
+                  <span className="sr-only">{t('nextMonth')}</span>
+                  <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="grid grid-cols-7 mt-10 text-xs leading-6 text-center text-gray-500 dark:text-slate-100">
+                <div>S</div>
+                <div>M</div>
+                <div>T</div>
+                <div>W</div>
+                <div>T</div>
+                <div>F</div>
+                <div>S</div>
+              </div>
+              <div className="grid grid-cols-7 mt-2 text-sm dark:text-white">
+                {days.map((day, dayIdx) => (
+                  <div
+                    key={day.toString()}
                     className={classNames(
-                      isEqual(day, selectedDay) && 'text-white',
-                      !isEqual(day, selectedDay) &&
-                        isToday(day) &&
-                        'text-red-500',
-                      !isEqual(day, selectedDay) &&
-                        !isToday(day) &&
-                        isSameMonth(day, firstDayCurrentMonth) &&
-                        'text-gray-900',
-                      !isEqual(day, selectedDay) &&
-                        !isToday(day) &&
-                        !isSameMonth(day, firstDayCurrentMonth) &&
-                        'text-gray-400',
-                      isEqual(day, selectedDay) && isToday(day) && 'bg-red-500',
-                      isEqual(day, selectedDay) &&
-                        !isToday(day) &&
-                        'bg-gray-900',
-                      !isEqual(day, selectedDay) && 'hover:bg-gray-200',
-                      (isEqual(day, selectedDay) || isToday(day)) &&
-                        'font-semibold',
-                      'mx-auto flex h-8 w-8 items-center justify-center rounded-full'
+                      dayIdx === 0 && colStartClasses[getDay(day)],
+                      'py-1.5'
                     )}
                   >
-                    <time dateTime={format(day, 'yyyy-MM-dd')}>
-                      {format(day, 'd')}
-                    </time>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDay(day)}
+                      className={classNames(
+                        isEqual(day, selectedDay) && 'text-white',
+                        !isEqual(day, selectedDay) &&
+                          isToday(day) &&
+                          'text-red-500',
+                        !isEqual(day, selectedDay) &&
+                          !isToday(day) &&
+                          isSameMonth(day, firstDayCurrentMonth) &&
+                          'text-gray-900',
+                        !isEqual(day, selectedDay) &&
+                          !isToday(day) &&
+                          !isSameMonth(day, firstDayCurrentMonth) &&
+                          'text-gray-400',
+                        isEqual(day, selectedDay) && isToday(day) && 'bg-red-500',
+                        isEqual(day, selectedDay) &&
+                          !isToday(day) &&
+                          'bg-gray-900',
+                        !isEqual(day, selectedDay) && 'hover:bg-gray-200',
+                        (isEqual(day, selectedDay) || isToday(day)) &&
+                          'font-semibold',
+                        'mx-auto flex h-8 w-8 items-center justify-center rounded-full'
+                      )}
+                    >
+                      <time dateTime={format(day, 'yyyy-MM-dd')}>
+                        {format(day, 'd')}
+                      </time>
+                    </button>
 
-                  <div className="w-1 h-1 mx-auto mt-1">
-                    {tasks.some((task: TaskInterface) =>
-                      isSameDay(task.date, day)
-                    ) && (
-                      <div className="w-1 h-1 rounded-full bg-sky-500"></div>
-                    )}
+                    <div className="w-1 h-1 mx-auto mt-1">
+                      {tasks.some((task: TaskInterface) =>
+                        isSameDay(task.date, day)
+                      ) && (
+                        <div className="w-1 h-1 rounded-full bg-sky-500"></div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
+            <section className="mt-12 md:mt-0 md:pl-14 ">
+              <h2 className="font-semibold text-gray-900 dark:text-white">
+                {t('scheduleFor')}{' '}
+                <time dateTime={format(selectedDay, 'yyyy-MM-dd')}>
+                  {format(selectedDay, 'MMM dd, yyy')}
+                </time>
+              </h2>
+              <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 dark:text-slate-100">
+                {selectedDayTasks.length > 0 ? (
+                  selectedDayTasks.map((task: TaskInterface) => (
+                    <Task task={task} key={task.id} />
+                  ))
+                ) : (
+                  <p>{t('noTasks')}.</p>
+                )}
+              </ol>
+            </section>
           </div>
-          <section className="mt-12 md:mt-0 md:pl-14 ">
-            <h2 className="font-semibold text-gray-900 dark:text-white">
-              Schedule for{' '}
-              <time dateTime={format(selectedDay, 'yyyy-MM-dd')}>
-                {format(selectedDay, 'MMM dd, yyy')}
-              </time>
-            </h2>
-            <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 dark:text-slate-100">
-              {selectedDayTasks.length > 0 ? (
-                selectedDayTasks.map((task: TaskInterface) => (
-                  <Task task={task} key={task.id} />
-                ))
-              ) : (
-                <p>No tasks for today.</p>
-              )}
-            </ol>
-          </section>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
 const Task = ({ task }) => {
+  const { t } = useTranslation()
   return (
-    <li className="flex items-center px-4 py-2 space-x-4 group rounded-xl focus-within:bg-gray-100 hover:bg-gray-100 dark:bg-gray-700">
-      <div className="flex-auto">
-        <p className="text-gray-900">{task.name}</p>
-        <p className="mt-0.5">
-        {task.content}
-        </p>
-      </div>
-      <Menu
-        as="div"
-        className="relative opacity-0 focus-within:opacity-100 group-hover:opacity-100"
-      >
-        <div>
-          <Menu.Button className="-m-2 flex items-center rounded-full p-1.5 text-gray-500 hover:text-gray-600 dark:text-slate-100 dark:bg-gray-700">
-            <span className="sr-only">Open options</span>
-            <DotsVerticalIcon className="w-6 h-6" aria-hidden="true" />
-          </Menu.Button>
+    <>
+      <li className="flex items-center px-4 py-2 space-x-4 group rounded-xl focus-within:bg-gray-100 hover:bg-gray-100 dark:bg-gray-700">
+        <div className="flex-auto">
+          <p className="text-gray-900">{task.title}</p>
+          <p className="mt-0.5">
+          {task.content}
+          </p>
         </div>
-
-        <Transition
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items className="absolute right-0 z-10 mt-2 origin-top-right bg-white rounded-md shadow-lg w-36 ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700">
-            <div className="py-1">
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#"
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900 dark:text-white dark:bg-gray-700' : 'text-gray-700 dark:text-slate-100 dark:bg-gray-700',
-                      'block px-4 py-2 text-sm'
-                    )}
-                  >
-                    Edit
-                  </a>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#"
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900 dark:text-white dark:bg-gray-700' : 'text-gray-700 dark:text-slate-100 dark:bg-gray-700',
-                      'block px-4 py-2 text-sm'
-                    )}
-                  >
-                    Cancel
-                  </a>
-                )}
-              </Menu.Item>
-            </div>
-          </Menu.Items>
-        </Transition>
-      </Menu>
-    </li>
+      </li>
+    </>
+    
   )
 }
-
 let colStartClasses = [
   '',
   'col-start-2',

@@ -1,0 +1,23 @@
+{
+    "title": "Titre",
+    "category": "Catégorie",
+    "priority": "Priorité",
+    "date": "Date",
+    "done": "Terminé",
+    "remove": "Supprimer",
+    "content": "Contenu",
+    "update": "Mettre à jour",
+    "cancel": "Annuler",
+    "choosePriority": "Choisissez un niveau de priorité",
+    "noTasks": "Pas de tâches pour aujourd'hui",
+    "scheduleFor": "Calendrier pour",
+    "openOptions": "Ouvrir les options",
+    "edit": "Modifier",
+    "previousMonth": "Mois précédent",
+    "nextMonth": "Mois suivant",
+    "addCategory": "Ajouter une catégorie",
+    "filter": "Filtre",
+    "darkMode": "Thème sombre",
+    "lightMode": "Thème clair",
+    "search": "Chercher"
+ }
